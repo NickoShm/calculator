@@ -57,8 +57,6 @@ public class Main {
                 if (Examination.numericalValue(operation_verification[0]) && Examination.numericalValue(operation_verification[1])) {
                     int num_x = Translation.translationIntoArabic(operation_verification[0]);
                     int num_y = Translation.translationIntoArabic(operation_verification[1]);
-//                    if (num_x >= 1 && num_x <= 10 && num_y >= 1 && num_y <= 10) {
-//                        if (Operation.action(input).equals("-") && num_x < num_y) {
                     String action = Operation.action(input);
                     int z = Operation.result(action, num_x, num_y);
                     return ("Output:\n" + Translation.translationIntoRim(z));
