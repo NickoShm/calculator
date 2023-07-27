@@ -2,11 +2,48 @@ import java.util.Scanner;
 
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ScannerException{
         Scanner s = new Scanner(System.in);
         System.out.println("Input:");
-        String input = s.nextLine().replaceAll("\\s", "");
-        String [] operation_verification = input.split("[-+*/.]");
+        while (true) {
+            String input = s.nextLine().replaceAll("\\s", "");
+            String [] operation_verification = input.split("[-+*/.]");
+            if (operation_verification.length == 1){
+                throw new ScannerException("т.к. строка не является математической операцией");
+            } else if (operation_verification.length != 2) {
+                throw new ScannerException("т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
+            } else {
+                try {
+                    int x = Integer.parseInt(operation_verification[0]);
+                    int y = Integer.parseInt(operation_verification[1]);
+                    if (x >= 1 && x <= 10 && y >= 1 && y <= 10) {
+                        System.out.println(calc(input));
+                    }else {
+                        throw new ScannerException("Калькулятор принимает на вход числа от 1 до 10 включительно, не более");
+                    }
+                }catch (NumberFormatException e){
+                    if(Examination.numericalValue(operation_verification[0]) && Examination.numericalValue(operation_verification[1])) {
+                        int num_x = Translation.translationIntoArabic(operation_verification[0]);
+                        int num_y = Translation.translationIntoArabic(operation_verification[1]);
+                        if (num_x >= 1 && num_x <= 10 && num_y >= 1 && num_y <= 10) {
+                            if (Operation.action(input).equals("-") && num_x < num_y) {
+                                throw new ScannerException("т.к. в римской системе нет отрицательных чисел");
+                            } else {
+                                System.out.println(calc(input));
+                            }
+                        } else {
+                            throw new ScannerException("Калькулятор принимает на вход только арабские и римские цифры");
+                        }
+                    }else {
+                        throw new ScannerException("т.к. используются одновременно разные системы счисления");
+                    }
+                }
+            }
+        }
+    }
+
+    public static String calc(String input) {
+        String[] operation_verification = input.split("[-+*/.]");
         if (operation_verification.length == 2) {
             try {
                 int x = Integer.parseInt(operation_verification[0]);
@@ -14,35 +51,21 @@ public class Main {
                 if (x >= 1 && x <= 10 && y >= 1 && y <= 10) {
                     String action = Operation.action(input);
                     int z = Operation.result(action, x, y);
-                    System.out.println("Output:\n" + z);
-                }else {
-                    System.out.println("Калькулятор принимает на вход числа от 1 до 10 включительно, не более");
+                    return ("Output:\n" + z);
                 }
-            }catch (NumberFormatException e){
-                if(Examination.numericalValue(operation_verification[0]) && Examination.numericalValue(operation_verification[1])) {
+            } catch (NumberFormatException e) {
+                if (Examination.numericalValue(operation_verification[0]) && Examination.numericalValue(operation_verification[1])) {
                     int num_x = Translation.translationIntoArabic(operation_verification[0]);
                     int num_y = Translation.translationIntoArabic(operation_verification[1]);
-                    if (num_x >= 1 && num_x <= 10 && num_y >= 1 && num_y <= 10) {
-                        if (Operation.action(input).equals("-") && num_x < num_y) {
-                            System.out.println("throws Exception //т.к. в римской системе нет отрицательных чисел");
-                        } else {
-                            String action = Operation.action(input);
-                            int z = Operation.result(action, num_x, num_y);
-                            System.out.println("Output:\n" + Translation.translationIntoRim(z));
-                        }
-                    } else {
-                        System.out.println(Examination.numericalValue(operation_verification[0]));
-                        System.out.println("Калькулятор принимает на вход числа от 1 до 10 включительно, не более");
-                    }
-                }else {
-                    System.out.println("throws Exception //т.к. используются одновременно разные системы счисления");
+//                    if (num_x >= 1 && num_x <= 10 && num_y >= 1 && num_y <= 10) {
+//                        if (Operation.action(input).equals("-") && num_x < num_y) {
+                    String action = Operation.action(input);
+                    int z = Operation.result(action, num_x, num_y);
+                    return ("Output:\n" + Translation.translationIntoRim(z));
                 }
             }
-        } else if (operation_verification.length == 1) {
-            System.out.println("throws Exception //т.к. строка не является математической операцией");
-        } else {
-            System.out.println("throws Exception //т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
         }
+        return null;
     }
 }
 
